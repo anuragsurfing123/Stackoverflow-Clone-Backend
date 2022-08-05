@@ -250,4 +250,20 @@ router.get("/", async (req, res) => {
     });
 });
 
+router.put("/viewUpdate/:id",async (req,res)=>{
+
+  try {
+      const updatedViews = await QuestionDB.findByIdAndUpdate(
+        req.params.id,
+        {
+          $inc: { views: 1 }
+        },
+        { new: true }
+      );
+      res.status(200).json(updatedViews);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+})
+
 module.exports = router;
