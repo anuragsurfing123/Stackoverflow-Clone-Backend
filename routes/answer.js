@@ -22,4 +22,17 @@ router.post("/", verifyToken , async (req, res) => {
     });
 });
 
+
+
+router.get("/:question_id",async (req,res)=>{
+  try{
+      const answers = await answerDB.find({question_id:req.params.question_id});
+
+      res.status(200).json(answers);
+
+  }catch(err){
+      res.status(500).json(err);
+  }
+})
+
 module.exports = router;
