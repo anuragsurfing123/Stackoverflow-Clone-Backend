@@ -25,23 +25,6 @@ router.post("/",verifyToken, async (req, res) => {
     });
 });
 
-// router.get("/", async (req, res) => {
-//   const questions = await QuestionDB.find({});
-
-//   try {
-//     if (questions) {
-//       res.status(200).send({ questions });
-//     } else {
-//       res.status(400).send({
-//         message: "question not found",
-//       });
-//     }
-//   } catch (e) {
-//     res.status(400).send({
-//       message: "Error in getting question",
-//     });
-//   }
-// });
 
 router.get("/:id", async (req, res) => {
   try {
@@ -110,6 +93,29 @@ router.get("/:id", async (req, res) => {
       //     preserveNullAndEmptyArrays: true,
       //   },
       // },
+      {
+        $lookup: {
+          from: "users",
+          let: { user_id: "$user_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$_id", "$$user_id"],
+                },
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                username:1,
+                email:1,
+              },
+            },
+          ],
+          as: "userDetail",
+        },
+      },
       {
         $project: {
           __v: 0,
@@ -180,15 +186,44 @@ router.get("/", async (req, res) => {
           {
             $project: {
               _id: 1,
-              // user_id: 1,
-              // answer: 1,
+              user_id: 1,
+              answer: 1,
               // created_at: 1,
-              // question_id: 1,
-              // created_at: 1,
+              question_id: 1,
+              created_at: 1,
             },
           },
         ],
         as: "answerDetails",
+      },
+    },
+    // {
+    //   $unwind: {
+    //     path: "$answerDetails",
+    //     preserveNullAndEmptyArrays: true,
+    //   },
+    // },
+    {
+      $lookup: {
+        from: "users",
+        let: { user_id: "$user_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ["$_id", "$$user_id"],
+              },
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              username:1,
+              email:1,
+            },
+          },
+        ],
+        as: "userDetail",
       },
     },
     // {
@@ -214,5 +249,21 @@ router.get("/", async (req, res) => {
       res.status(400).send(error);
     });
 });
+
+router.put("/viewUpdate/:id",async (req,res)=>{
+
+  try {
+      const updatedViews = await QuestionDB.findByIdAndUpdate(
+        req.params.id,
+        {
+          $inc: { views: 1 }
+        },
+        { new: true }
+      );
+      res.status(200).json(updatedViews);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+})
 
 module.exports = router;

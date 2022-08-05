@@ -7,6 +7,8 @@ const authRoutes = require("./routes/auth");
 const questionsRoutes = require("./routes/question")
 const answersRoutes = require("./routes/answer")
 const commentsRoutes = require("./routes/comment")
+const votesRoutes = require("./routes/votes")
+
 
 
 
@@ -34,6 +36,8 @@ app.use("/api/auth",authRoutes);
 app.use("/api/questions",questionsRoutes);
 app.use("/api/answers",answersRoutes);commentsRoutes
 app.use("/api/comments",commentsRoutes);
+app.use("/api/votes",votesRoutes);
+
 
 
 
