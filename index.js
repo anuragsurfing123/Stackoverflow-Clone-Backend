@@ -29,9 +29,9 @@ app.use(express.json());
 
 
 
-// app.get('/',(req,res)=>{
-//     res.send("Hello World")
-// })
+app.get('/',(req,res)=>{
+    res.send("Working Fine")
+})
 app.use("/api/auth",authRoutes);
 app.use("/api/questions",questionsRoutes);
 app.use("/api/answers",answersRoutes);commentsRoutes
